@@ -1,0 +1,4 @@
+interface:
+  display_name: "Chromium Password Store"
+  short_description: "Write browser logins into Chromium-style stores safely"
+  default_prompt: "Use $chromium-password-store to back up the browser login database, encrypt a password with the platform-safe method, and upsert a login entry without exposing secrets in logs."

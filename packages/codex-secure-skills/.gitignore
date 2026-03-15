@@ -1,0 +1,14 @@
+# Local secrets and browser artifacts
+*.sqlite
+*.sqlite-journal
+*.db
+*.bak
+*.log
+Cookies
+Login Data
+Login Data-*
+Local State
+
+# Python
+__pycache__/
+*.pyc

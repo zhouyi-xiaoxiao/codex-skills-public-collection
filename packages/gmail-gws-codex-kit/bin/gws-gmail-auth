@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+python3 - "$@" <<'PY'
+import argparse
+import json
+import os
+import pathlib
+import urllib.parse
+import urllib.request
+import webbrowser
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+SCOPES = [
+    "https://www.googleapis.com/auth/gmail.modify",
+    "openid",
+    "https://www.googleapis.com/auth/userinfo.email",
+]
+
+
+class OAuthCallbackHandler(BaseHTTPRequestHandler):
+    result = {}
+
+    def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        query = urllib.parse.parse_qs(parsed.query)
+        OAuthCallbackHandler.result = {k: v[0] for k, v in query.items()}
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(
+            b"<html><body><h1>Gmail auth complete</h1><p>You can close this tab.</p></body></html>"
+        )
+
+    def log_message(self, *_args):
+        pass
+
+
+def load_client(path: pathlib.Path):
+    data = json.loads(path.read_text(encoding="utf-8"))
+    client = data.get("installed") or data.get("web")
+    if not client:
+        raise SystemExit(f"Unsupported OAuth client JSON: {path}")
+    return client
+
+
+def exchange_code(client_id: str, client_secret: str, code: str, redirect_uri: str):
+    payload = urllib.parse.urlencode(
+        {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri,
+        }
+    ).encode()
+    request = urllib.request.Request(
+        "https://oauth2.googleapis.com/token",
+        data=payload,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+    return json.load(urllib.request.urlopen(request))
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--client-file",
+        default=os.path.expanduser("~/.config/gws/client_secret.json"),
+    )
+    parser.add_argument(
+        "--output-file",
+        default=os.path.expanduser("~/.config/gws/gmail-authorized-user.json"),
+    )
+    parser.add_argument("--no-open", action="store_true")
+    args = parser.parse_args()
+
+    client_path = pathlib.Path(args.client_file).expanduser()
+    output_path = pathlib.Path(args.output_file).expanduser()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    client = load_client(client_path)
+
+    server = HTTPServer(("127.0.0.1", 0), OAuthCallbackHandler)
+    port = server.server_address[1]
+    redirect_uri = f"http://localhost:{port}"
+
+    params = {
+        "client_id": client["client_id"],
+        "redirect_uri": redirect_uri,
+        "response_type": "code",
+        "access_type": "offline",
+        "prompt": "consent",
+        "include_granted_scopes": "false",
+        "scope": " ".join(SCOPES),
+    }
+    url = "https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params)
+
+    print("Open this URL to authorize Gmail access:\n")
+    print(url)
+    print()
+    if not args.no_open:
+        webbrowser.open(url)
+
+    server.handle_request()
+    result = OAuthCallbackHandler.result
+    if "code" not in result:
+        raise SystemExit(f"OAuth failed: {json.dumps(result, ensure_ascii=False)}")
+
+    token = exchange_code(
+        client["client_id"],
+        client["client_secret"],
+        result["code"],
+        redirect_uri,
+    )
+    auth_user = {
+        "client_id": client["client_id"],
+        "client_secret": client["client_secret"],
+        "refresh_token": token["refresh_token"],
+        "type": "authorized_user",
+    }
+    output_path.write_text(json.dumps(auth_user, indent=2) + "\n", encoding="utf-8")
+    os.chmod(output_path, 0o600)
+
+    print("Saved Gmail authorized-user credentials:")
+    print(output_path)
+    print()
+    print("Granted scopes:")
+    print(token.get("scope", ""))
+    if "refresh_token_expires_in" in token:
+        print()
+        print(f"refresh_token_expires_in={token['refresh_token_expires_in']}")
+
+
+if __name__ == "__main__":
+    main()
+PY

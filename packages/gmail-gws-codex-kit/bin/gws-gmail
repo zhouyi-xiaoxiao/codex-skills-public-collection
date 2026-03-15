@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+AUTH_FILE="${GWS_GMAIL_AUTH_FILE:-$HOME/.config/gws/gmail-authorized-user.json}"
+
+if [[ ! -f "$AUTH_FILE" ]]; then
+  echo "Missing authorized user file: $AUTH_FILE" >&2
+  echo "Run: gws-gmail-auth" >&2
+  exit 1
+fi
+
+ACCESS_TOKEN="$(
+python3 - "$AUTH_FILE" <<'PY'
+import json
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+path = sys.argv[1]
+with open(path, "r", encoding="utf-8") as fh:
+    creds = json.load(fh)
+
+payload = urllib.parse.urlencode(
+    {
+        "client_id": creds["client_id"],
+        "client_secret": creds["client_secret"],
+        "refresh_token": creds["refresh_token"],
+        "grant_type": "refresh_token",
+    }
+).encode()
+
+request = urllib.request.Request(
+    "https://oauth2.googleapis.com/token",
+    data=payload,
+    headers={"Content-Type": "application/x-www-form-urlencoded"},
+)
+
+try:
+    response = json.load(urllib.request.urlopen(request))
+except urllib.error.HTTPError as exc:
+    details = exc.read().decode("utf-8", errors="replace")
+    raise SystemExit(
+        "Failed to refresh Gmail access token. "
+        "Your testing-mode refresh token may have expired.\n" + details
+    )
+
+print(response["access_token"])
+PY
+)"
+
+GOOGLE_WORKSPACE_CLI_TOKEN="$ACCESS_TOKEN" exec gws gmail "$@"

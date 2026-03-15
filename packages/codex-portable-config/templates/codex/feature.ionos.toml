@@ -1,0 +1,4 @@
+[mcp_servers.ionos]
+command = "node"
+args = ["{{HOME_DIR}}/.codex/mcp/ionos-mcp/server.mjs"]
+env_vars = ["IONOS_API_KEY", "IONOS_PREFIX", "IONOS_SECRET", "IONOS_DNS_BASE_URL"]

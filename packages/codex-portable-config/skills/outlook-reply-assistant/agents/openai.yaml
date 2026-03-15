@@ -1,0 +1,4 @@
+interface:
+  display_name: "Outlook Reply Assistant"
+  short_description: "Reply in Outlook with attachments and sent-mail checks"
+  default_prompt: "Use $outlook-reply-assistant to reply to an Outlook email, add attachments when needed, and confirm the sent message exists afterward."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Teaching Hours Claim"
+  short_description: "Reconstruct teaching-hours claims"
+  default_prompt: "Use $teaching-hours-claim-skill to reconstruct teaching hours for a course from email evidence and draft an approval or hours-claim message."

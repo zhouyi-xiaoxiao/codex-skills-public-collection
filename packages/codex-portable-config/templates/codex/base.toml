@@ -1,0 +1,20 @@
+model = "gpt-5.3-codex"
+model_reasoning_effort = "xhigh"
+personality = "friendly"
+sandbox_mode = "danger-full-access"
+approval_policy = "never"
+
+[projects."/"]
+trust_level = "trusted"
+
+[projects."{{WORKSPACE_ROOT}}"]
+trust_level = "trusted"
+
+[notice]
+"hide_gpt-5.1-codex-max_migration_prompt" = true
+
+[notice.model_migrations]
+"gpt-5.2" = "gpt-5.2-codex"
+
+[features]
+shell_snapshot = true

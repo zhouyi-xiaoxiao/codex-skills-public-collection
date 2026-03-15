@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verification Recovery Handoff"
+  short_description: "Handle signup verification without CAPTCHA bypass"
+  default_prompt: "Use $verification-recovery-handoff to complete legitimate verification steps through email links, session reuse, OAuth callbacks, and clear manual handoff when CAPTCHA or 2FA must be completed by the user."

@@ -1,0 +1,7 @@
+[mcp_servers.outlook]
+command = "npx"
+args = ["-y", "outlook-mcp-device-flow"]
+env_vars = ["OUTLOOK_CLIENT_ID"]
+
+[mcp_servers.outlook.env]
+OUTLOOK_TENANT_ID = "{{OUTLOOK_TENANT_ID}}"

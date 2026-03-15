@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT="${BASH_SOURCE[0]}"
+while [[ -h "$SCRIPT" ]]; do
+  DIR="$(cd "$(dirname "$SCRIPT")" && pwd)"
+  SCRIPT="$(readlink "$SCRIPT")"
+  [[ "$SCRIPT" != /* ]] && SCRIPT="$DIR/$SCRIPT"
+done
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT")" && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+CMD="${1:-}"
+if [[ -n "$CMD" ]]; then
+  shift
+fi
+
+usage() {
+  cat <<USAGE
+Usage:
+  codex-portable enable --host <host-id> [--profile core|research|ops] [--interval-minutes <n>] [--autosync-push]
+  codex-portable bootstrap --host <host-id> [--profile core|research|ops]
+  codex-portable render --host <host-id> [--profile core|research|ops]
+  codex-portable doctor --host <host-id> [--profile core|research|ops]
+  codex-portable sync --host <host-id> [--profile core|research|ops] [--push] [--message <msg>] [--skip-backup]
+  codex-portable autosync install --host <host-id> [--profile core|research|ops] [--interval-minutes <n>] [--push] [--with-backup] [--no-load]
+  codex-portable autosync uninstall --host <host-id>
+  codex-portable autosync status --host <host-id>
+  codex-portable switch --candidate <path> [--target <path>]
+  codex-portable backup --target onedrive [--host <host-id>]
+USAGE
+}
+
+case "$CMD" in
+  enable)
+    exec "$ROOT/scripts/enable-device-automation.sh" "$@"
+    ;;
+  bootstrap)
+    exec "$ROOT/scripts/bootstrap-macos.sh" "$@"
+    ;;
+  render)
+    exec "$ROOT/scripts/render-config.sh" "$@"
+    ;;
+  doctor)
+    exec "$ROOT/scripts/doctor.sh" "$@"
+    ;;
+  sync)
+    exec "$ROOT/scripts/sync-all.sh" "$@"
+    ;;
+  autosync)
+    exec "$ROOT/scripts/autosync-launchd.sh" "$@"
+    ;;
+  switch)
+    exec "$ROOT/scripts/switch-bluegreen.sh" "$@"
+    ;;
+  backup)
+    exec "$ROOT/scripts/backup-onedrive.sh" "$@"
+    ;;
+  -h|--help|help|"")
+    usage
+    ;;
+  *)
+    echo "Unknown command: $CMD" >&2
+    usage
+    exit 2
+    ;;
+esac

@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# temp and generated
+*.next
+*.bak
+*.tmp
+
+# local overrides / secrets
+hosts/*.local.env
+hosts/*-secrets.env
+.cloud-secrets*.env
+.env
+.env.*
+
+# state / cache
+.cache/
+.tmp/
+
+# editor
+.vscode/
+.idea/
