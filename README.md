@@ -1,27 +1,25 @@
 # Codex Skills Public Collection
 
-This repository is a curated public collection of reusable Codex skills and related setup kits. It was assembled as a fresh public-safe export, with live personal configuration removed and package contents normalized for reuse.
+A skill is a small package a coding agent loads when a task calls for it: a `SKILL.md` that says when and how to act, plus the scripts and reference notes it needs. This repository holds four packages written for the Codex CLI and published for anyone to reuse; two of them assume macOS.
 
-Clone the collection:
+They come from a larger private set. What is here was re-exported with fresh history, and usernames, home paths, hosts and institution-specific details were replaced with placeholders ([SANITIZATION.md](SANITIZATION.md) lists what was done). Published 15 March 2026, MIT licence. Provided as is.
+
+## Packages
+
+- **[gmail-gws-codex-kit](packages/gmail-gws-codex-kit/)**: Gmail for Codex through a `gws` wrapper that refreshes its own OAuth token, plus a `gmail-gws` skill. Needs `bash`, `python3` and your own Google OAuth desktop client; `npm` optional.
+- **[teaching-hours-claim-skill](packages/teaching-hours-claim-skill/)**: rebuilds a teaching-hours claim (sessions, marking, meetings, training) from the evidence in your email and drafts the approval or explanation message. For tutors, markers and other hourly-paid teaching staff.
+- **[codex-secure-skills](packages/codex-secure-skills/)**: two careful skills. One backs up and updates saved logins in Chromium-style password stores without writing plaintext. The other resumes a stalled sign-up through legitimate email links and stops at CAPTCHA, two-factor and payment steps. Needs `python3`.
+- **[codex-portable-config](packages/codex-portable-config/)**: a template for keeping one Codex and MCP configuration across several Macs (per-host settings, profiles, sync and health checks), with two example skills, one for replying to Outlook mail and one for running jobs on a SLURM cluster. Needs `bash` and Codex.
+
+## Using a package
 
 ```bash
 git clone https://github.com/zhouyi-xiaoxiao/codex-skills-public-collection.git
 cd codex-skills-public-collection
 ```
 
-## Packages
+Read the package's own `README.md`, then copy the skill folder you want into `~/.codex/skills/`. Keep OAuth files, tokens, cookies, local databases and host env files on your own machine; none of them belong in a copy of this repository. [SECURITY.md](SECURITY.md) has the rest.
 
-| Package | Purpose | Who it's for | Install path | Required tools | Contents |
-| --- | --- | --- | --- | --- | --- |
-| `gmail-gws-codex-kit` | Gmail access for Codex via `gws-gmail`, local OAuth refresh, and a Codex skill | People who want Gmail alongside Outlook in Codex | `packages/gmail-gws-codex-kit/` | `bash`, `python3`, optional `npm`, Google OAuth desktop client | One skill plus wrapper scripts |
-| `teaching-hours-claim-skill` | Reconstruct teaching-hour claims from email evidence and draft approval messages | Teaching assistants, tutors, markers, and hourly-paid teaching staff | `packages/teaching-hours-claim-skill/` | Codex skill runtime plus email access | One skill plus reference templates |
-| `codex-secure-skills` | Security-focused skills for browser credential handling and verification recovery | People building careful account-recovery or credential-maintenance workflows | `packages/codex-secure-skills/` | `python3` for bundled script usage | Two standalone skills |
-| `codex-portable-config` | Portable Codex and MCP configuration template for multi-device setups | People adapting a reusable local configuration template | `packages/codex-portable-config/` | `bash`, Codex, optional launchd/macOS automation tools | Template scripts, skills, and config scaffolding |
+---
 
-## How to use this repo
-
-- Read the package-level `README.md` in the package you want to use.
-- Copy skills into `~/.codex/skills/` only from the public-safe package directories in this repo.
-- Keep OAuth files, tokens, cookies, local databases, and live host env files on your machine only.
-
-See [SANITIZATION.md](SANITIZATION.md) for the export policy and [SECURITY.md](SECURITY.md) for safe reuse guidance.
+Xiaoxiao Zhouyi · [zhouyixiaoxiao.com](https://zhouyixiaoxiao.com/)
