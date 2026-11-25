@@ -1,6 +1,6 @@
 ---
 name: verification-recovery-handoff
-description: "Handle legitimate signup and login verification through email links, session reuse, and first-party OAuth callbacks. Use when onboarding is blocked by split-domain auth, delayed verification mail, or anti-abuse gates that require a safe human handoff instead of CAPTCHA bypass."
+description: "Handle legitimate signup and login verification through email links, session reuse, and first-party OAuth callbacks. Use when onboarding is blocked by split-domain auth, delayed verification mail, or a verification step that needs the user; hand over to the user instead of bypassing a CAPTCHA."
 ---
 
 # Verification Recovery Handoff
@@ -15,7 +15,6 @@ Use this skill when an onboarding flow stalls on verification rather than on the
 
 - Try the ordinary signup or login flow first.
 - Confirm which requirement the user actually needs to satisfy: account creation, verified email, dashboard access, billing setup, or API key creation.
-- Avoid jumping into frontend inspection until the standard path clearly fails or loops.
 
 ### 2. Recover through email before escalating
 
@@ -28,18 +27,10 @@ Use this skill when an onboarding flow stalls on verification rather than on the
 - Check whether the user is already signed in on a related first-party domain.
 - Inspect cookies, local storage, and current browser state only for the target service's own domains.
 - When split-domain auth is involved, look for first-party authorize and callback URLs that bridge the authenticated host to the product console.
-
-### 4. Inspect first-party auth flows carefully
-
-- If the browser UI is stuck, inspect the target site's own network requests or frontend bundle for:
-  - verification endpoints
-  - authorize endpoints
-  - callback routes
-  - state and redirect parameters
 - Use only legitimate first-party flows that the site already exposes.
 - Do not fabricate tokens, replay someone else's session, or tamper with anti-abuse challenges.
 
-### 5. Hand off when the user must act
+### 4. Hand off when the user must act
 
 Stop and hand control back for:
 

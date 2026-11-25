@@ -5,7 +5,7 @@ This public repository was assembled from a separate set of working repositories
 ## Source packages
 
 - `gmail-gws-codex-kit`
-- `bristol-claim-teaching-hours`
+- `teaching-hours-claim-skill` (originally an institution-specific package)
 - `codex-secure-skills`
 - `codex-portable-config`
 
@@ -26,4 +26,4 @@ This public repository was assembled from a separate set of working repositories
 
 ## Provenance note
 
-The package names listed above are included here as provenance only. They are not public installation targets for this collection.
+Packages are listed under the names they have in this collection.

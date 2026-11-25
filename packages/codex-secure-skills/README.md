@@ -1,6 +1,6 @@
 # Codex Secure Skills
 
-This repository packages two reusable Codex skills for safer account onboarding and browser credential handling on macOS.
+This package contains two reusable Codex skills for safer account onboarding and browser credential handling on macOS.
 
 Run the install commands below from the monorepo root.
 
