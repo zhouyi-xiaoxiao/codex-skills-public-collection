@@ -68,7 +68,7 @@ esac
 if is_enabled "${ENABLE_MCP_GITHUB:-1}"; then
   FRAGMENTS+=("$ROOT/templates/codex/feature.github.toml")
 fi
-if is_enabled "${ENABLE_MCP_IONOS:-1}"; then
+if is_enabled "${ENABLE_MCP_IONOS:-0}"; then
   FRAGMENTS+=("$ROOT/templates/codex/feature.ionos.toml")
 fi
 if is_enabled "${ENABLE_MCP_OUTLOOK:-1}"; then
